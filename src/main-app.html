@@ -42,13 +42,21 @@
       <home-with-layout
         name="home"
         module-name="home"
-        module-route="{{subroute}}">
+        module-route="{{subroute}}"
+        app-title="[[appTitle]]">
       </home-with-layout>
-      <korero-with-layout
-        name="korero"
-        module-name="korero"
-        module-route="{{subroute}}">
-      </korero-with-layout>
+      <schuyler-author-with-layout
+        name="schuyler-author"
+        module-name="schuyler-author"
+        module-route="{{subroute}}"
+        app-title="[[appTitle]]">
+      </schuyler-author-with-layout>
+      <schuyler-player-with-layout
+        name="schuyler-player"
+        module-name="schuyler-player"
+        module-route="{{subroute}}"
+        app-title="[[appTitle]]">
+      </schuyler-player-with-layout>
     </neon-animated-pages>
 
   </template>
@@ -68,6 +76,10 @@
           reflectToAttribute: true,
           observer: '_minimoduleChanged'
         },
+        appTitle: {
+          type: String,
+          value: 'Project Schuyler'
+        }
       },
 
       // observers
