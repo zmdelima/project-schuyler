@@ -1,0 +1,219 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/app-storage/app-network-status-behavior.html">
+<link rel="import" href="../../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<dom-module id="main-layout">
+  <template>
+
+    <style is="custom-style">
+      :host {
+        display: block;
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      app-header {
+        background-color: var(--app-primary-color);
+        color: #fff;
+      }
+
+      paper-tabs .link {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+
+    <!-- Auths here -->
+    <firebase-auth
+      id="auth"
+      provider="google"
+      signed-in="{{signedIn}}"
+      user="{{user}}">
+    </firebase-auth>
+
+
+    <!-- Auths ends here -->
+
+    <iron-media-query
+        query="[[_computeMediaQuery()]]"
+        on-query-matches-changed="_onQueryMatchesChanged"></iron-media-query>
+
+
+    <app-drawer-layout force-narrow fullbleed id="main-app-drawer-layout">
+
+      <!-- Drawer content -->
+      <app-drawer>
+        <app-toolbar>{{appTitle}}</app-toolbar>
+        <paper-menu attr-for-selected="name" selected="{{page}}" role="navigation" class="drawer-list">
+          <template is="dom-repeat" items="{{menu}}">
+            <template is="dom-if" if="{{checkMenuAuth(item.auth, user)}}">
+              <template is="dom-if" if="{{item.page}}">
+                <a href="/{{moduleName}}/{{item.page}}" name="{{item.name}}" tabindex="-1">
+                  <paper-item>{{item.label}}</paper-item>
+                </a>
+              </template>
+              <template is="dom-if" if="{{item.href}}">
+                <a href="{{item.href}}" name="{{item.name}}" tabindex="-1">
+                  <paper-item>{{item.label}}</paper-item>
+                </a>
+              </template>
+            </template>
+          </template>
+        </paper-menu>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle class$="{{showMenuButton}}"></paper-icon-button>
+            <div title>{{appTitle}}</div>
+            <paper-tabs attr-for-selected="name" selected="{{page}}" role="navigation" class$="{{showHeaderMenu}}">
+              <template is="dom-repeat" items="{{menu}}">
+                <template is="dom-if" if="{{checkMenuAuth(item.auth, user)}}">
+                  <paper-tab name="{{item.name}}" >
+                    <template is="dom-if" if="{{item.page}}">
+                      <a href="/{{moduleName}}/{{item.page}}" class="link" tabindex="-1">
+                        {{item.label}}
+                      </a>
+                    </template>
+                    <template is="dom-if" if="{{item.href}}">
+                      <a href="{{item.href}}" class="link" tabindex="-1">
+                        {{item.label}}
+                      </a>
+                    </template>
+                  </paper-tab>
+                </template>
+              </template>
+            </paper-tabs>
+            <paper-tabs no-bar selected="[[page]]" attr-for-selected="name">
+              <template is="dom-if" if="{{online}}">
+                <template is="dom-if" if="{{!signedIn}}">
+                  <paper-tab on-click="signIn">
+                    Login
+                  </paper-tab>
+                </template>
+                <template is="dom-if" if="{{signedIn}}">
+                  <paper-tab on-tap="signOut">
+                    Logout
+                  </paper-tab>
+                </template>
+              </template>
+              <template is="dom-if" if="{{!online}}">
+                <paper-tab>
+                  <iron-icon icon="cloud-off" id="offline-icon"></iron-icon>
+                </paper-tab>
+              </template>
+            </paper-tabs>
+          </app-toolbar>
+        </app-header>
+
+        <neon-animated-pages
+          selected="[[page]]"
+          attr-for-selected="name"
+          entry-animation="fade-in-animation"
+          exit-animation="fade-out-animation">
+          <content id="content"></content>
+        </neon-animated-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+
+    <paper-toast id="toaster"></paper-toast>
+    <template is="dom-if" if="{{!online}}">
+      <paper-tooltip for="offline-icon" offset="0">Offline</paper-tooltip>
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+
+      // name of the component
+      is: 'main-layout',
+
+      // properties
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+        },
+        moduleName: {
+          type: String,
+          reflectToAttribute: true
+        },
+        menu: {
+          type: Array
+        },
+        signedIn: {
+          type: Boolean,
+          notify: true
+        },
+        user: {
+          type: Object,
+          notify: true
+        },
+        appTitle: {
+          type: String
+        },
+        showMenuButton: {
+          type: String
+        },
+        showHeaderMenu: {
+          type: String
+        }
+      },
+
+      behaviors: [
+        Polymer.AppNetworkStatusBehavior
+      ],
+
+      _onQueryMatchesChanged: function(e) {
+        this.showMenuButton = !e.detail.value ? 'hidden' : false;
+        this.showHeaderMenu = e.detail.value ? 'hidden' : false;
+      },
+
+      _computeMediaQuery: function() {
+        return '(max-width: ' + this.$['main-app-drawer-layout'].responsiveWidth + ')';
+      },
+
+      signIn() {
+        this.$.auth.signInWithPopup().then(function(result) {
+          this.$.toaster.show(`Welcome ${result.user.displayName}!`);
+        }.bind(this)).catch(this._catchError.bind(this));
+      },
+
+      signOut() {
+        if (this.$.auth) {
+          this.$.auth.signOut().then(function() {
+            this.$.toaster.show(`Goodbye!`);
+          }.bind(this)).catch(this._catchError.bind(this));
+        } else {
+          this.$.toaster.show('You are already logged out.');
+        }
+      },
+
+    });
+  </script>
+</dom-module>

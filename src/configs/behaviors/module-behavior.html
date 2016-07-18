@@ -1,0 +1,55 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<script>
+  (function() {
+    'use strict';
+
+    /** @polymerBehavior Polymer.ModuleBehavior */
+    Polymer.ModuleBehaviorImpl = {
+      properties: {
+        moduleRoute: {
+          type: Object,
+          notify: true
+        },
+        moduleData: {
+          type: Object,
+          notify: true
+        },
+        moduleName: {
+          type: String,
+          notify: true,
+          reflectToAttribute: true,
+        },
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+        subroute: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      // observers
+      observers: [
+        '_moduleDataChanged(moduleData.page)'
+      ],
+
+      _moduleDataChanged(page) {
+        this.page = page || 'root';
+      },
+
+      _pageChanged: function(page) {
+        // load minimodule import on demand.
+        this.importHref(
+          this.resolveUrl(`pages/${page}.html`), null, null, true);
+      }
+    };
+
+    /** @polymerBehavior */
+    Polymer.ModuleBehavior = [
+      // Polymer.AppNetworkStatusBehavior,
+      Polymer.ModuleBehaviorImpl
+    ];
+  })();
+</script>
