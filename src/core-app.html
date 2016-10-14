@@ -58,10 +58,15 @@
         subroute="{{subroute}}"
         query-params="{{queryParams}}"
         navigation-list="{{navigationList}}"
-        not-found-tag="nice-not-found-page"
-        not-found-source="/src/pages/nice-not-found/nice-not-found-page.html">
+        not-found-tag="schuyler-not-found-page"
+        not-found-source="/src/pages/schuyler-not-found/schuyler-not-found-page.html">
         
         <!-- Page Elements here -->
+        <schuyler-home-page 
+          page="home" 
+          source="/src/pages/schuyler-home/schuyler-home-page.html"
+          query-params="{{queryParams}}"
+          label="HOME"></schuyler-home-page>
           
       </rc-core-route>
     </rc-core-shell>
