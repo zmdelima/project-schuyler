@@ -1,0 +1,28 @@
+// rc-auth-style
+
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.rc-auth-item {
+  
+}
+
+.rc-auth-header {
+  .rc-auth-item {
+    color: $gray-dark;
+    text-decoration: none;
+    margin-left: 25px;
+    margin-right: 80px;
+    
+    @include tablet {
+      margin-right: 20px;
+      font-size: 0.7em;
+    }
+    
+    @include smalldesktop {
+      font-size: 0.7em;
+      margin-right: 20px;
+      margin-left: 10px;
+    }
+  }
+}

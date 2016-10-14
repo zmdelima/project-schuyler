@@ -1,0 +1,24 @@
+// rc-navigation-style
+
+@import '../../../styles/variables';
+@import '../../../styles/block';
+@import '../../../styles/mixins';
+
+.rc-navigation-item {
+  
+}
+
+.rc-navigation-header {
+  .rc-navigation-item {
+    color: $gray-dark;
+    text-decoration: none;
+    margin-left: 25px;
+    margin-right: 25px;
+    
+    @include smalldesktop {
+      font-size: 0.7em;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+  }
+}

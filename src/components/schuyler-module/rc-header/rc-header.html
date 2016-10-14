@@ -1,0 +1,75 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+
+<!-- Polymer Elements dependencies -->
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+
+<!-- Component dependencies -->
+<!-- NICE Module Component dependencies -->
+<link rel="import" href="../../rc-access/rc-navigation/rc-navigation.html">
+<link rel="import" href="../../rc-access/rc-auth/rc-auth.html">
+
+<!-- Behvaior dependencies -->
+<link rel="import" href="../../rc-access/rc-behaviors/rc-user-firebase-behavior.html">
+
+<!-- Style dependencies -->
+<link rel="import" href="schuyler-header-style.html">
+
+<dom-module id="schuyler-header">
+  <template>
+    <style is="custom-style" include="schuyler-header-style">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <app-header>
+      <app-toolbar>
+        <paper-icon-button 
+          id="toggle-drawer" 
+          class="rc--hide-small-desktop rc--hide-large-screen" 
+          icon="menu" 
+          on-tap="_toggleDrawer"></paper-icon-button>
+
+        <span main-title>
+          App Name 
+        </span>
+        
+        <rc-navigation
+          class="rc--hide-phone rc--hide-tablet"
+          navigation-list="[[navigationList]]"
+          user="{{user}}"
+          roles="{{roles}}"></rc-navigation>
+          
+        <rc-auth class="rc--hide-phone" user="{{user}}" roles="{{roles}}"></rc-auth>
+    
+      </app-toolbar>
+    </app-header>
+    
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'schuyler-header',
+      
+      properties: {
+        navigationList: {
+          type: Array,
+        }
+      },
+      
+      behaviors: [
+        Polymer.RcUserFirebaseBehavior  
+      ],
+      
+      _toggleDrawer: function() {
+        this.fire('toggle-drawer', {});
+      }
+    })
+  </script>
+</dom-module>
