@@ -1,0 +1,87 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<!-- Polymer Component dependencies -->
+
+
+<!-- Component dependencies -->
+<!-- RC-Core dependencies -->
+<link rel="import" href="./components/rc-core/rc-core-shell.html">
+<link rel="import" href="./components/rc-core/rc-core-route.html">
+
+<link rel="import" href="./components/schuyler-module/schuyler-header/schuyler-header.html">
+
+<!-- Behavior dependencies -->
+<link rel="import" href="./components/rc-core/rc-core-user-behavior.html">
+
+
+<dom-module id="core-app">
+  <template strip-whitespace>
+    <style is="custom-style">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <!--<firebase-app-->
+    <!--  api-key="key-here"-->
+    <!--  auth-domain="auth-domain-here"-->
+    <!--  database-url="db-url-here"-->
+    <!--  storage-bucket="storage-bucket-here">-->
+    <!--</firebase-app>-->
+    
+    <rc-core-shell 
+      scroll-progress="{{scrollProgress}}"
+      tablets="{{hideDrawer}}">
+      
+      <!-- HEADER -->
+      <rc-header 
+        core-header 
+        page="[[page]]" 
+        scroll-progress="[[scrollProgress]]"
+        navigation-list="[[navigationList]]"
+        user="{{user}}"></rc-header>
+      
+      <!-- DRAWER -->  
+      <!--<nice-drawer-->
+      <!--  core-drawer-->
+      <!--  page="[[page]]"-->
+      <!--  navigation-list="[[navigationList]]"-->
+      <!--  hide-drawer="[[hideDrawer]]"></nice-drawer>-->
+      
+      <!-- CORE-CONTENT -->
+      <rc-core-route 
+        core-content
+        default-page="home"
+        page="{{page}}"
+        user="{{user}}"
+        subroute="{{subroute}}"
+        query-params="{{queryParams}}"
+        navigation-list="{{navigationList}}"
+        not-found-tag="nice-not-found-page"
+        not-found-source="/src/pages/nice-not-found/nice-not-found-page.html">
+        
+        <!-- Page Elements here -->
+          
+      </rc-core-route>
+    </rc-core-shell>
+    
+  </template>
+  <script>
+    /*global Polymer*/
+  
+    Polymer({
+      is: 'core-app',
+      
+      properties: {
+        navigationList: {
+          type: Array,
+        }
+      },
+      
+      behaviors: [
+        Polymer.RcCoreUserBehavior  
+      ]
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,138 @@
+<!-- Polymer dependencies -->
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<!-- Polymer Element dependencies -->
+<link rel="import" href="../../../bower_components/app-layout/app-box/app-box.html">
+<link rel="import" href="../../../bower_components/app-layout/app-scroll-effects/effects/parallax-background.html">
+<link rel="import" href="../../../bower_components/iron-media-query/iron-media-query.html">
+
+<!-- Component dependencies -->
+
+
+<dom-module id="rc-core-shell">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <!-- Custom Media Queries -->
+    <iron-media-query
+      query="[[_computeIsBelowWidthQuery(isBelowWidth)]]"
+      query-matches="{{isBelowWidthFlag}}"></iron-media-query>
+      
+    <iron-media-query
+      query="[[_computeIsAboveWidthQuery(isAboveWidth)]]"
+      query-matches="{{isAboveWidthFlag}}"></iron-media-query>
+      
+    <!-- Mobile First Queries -->
+    <iron-media-query
+      query="(min-width: 320px)"
+      query-matches="{{phones}}"></iron-media-query>
+    
+    <iron-media-query
+      query="(min-width: 480px)"
+      query-matches="{{tablets}}"></iron-media-query>
+      
+    <iron-media-query
+      query="(min-width: 840px)"
+      query-matches="{{smallDesktops}}"></iron-media-query>
+      
+    <iron-media-query
+      query="(min-width: 1200px)"
+      query-matches="{{largeScreens}}"></iron-media-query>
+    
+    <!-- Scroll Computation -->
+    <app-box
+      effects="parallax-background"
+      effects-config='{"parallax-background": {"scalar": -0.5}}'></app-box>
+
+    <!-- Content ordering-->
+    <content id="core-content" select="[core-content]"></content>
+    <content id="core-header" select="[core-header]"></content>
+    <content id="core-drawer" select="[core-drawer]"></content>
+    <content id="core-drawer-right" select="[core-drawer-right]"></content>
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'rc-core-shell',
+      
+      properties: {
+        scrollProgress: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        isBelowWidth: {
+          type: Number,
+          value: 768
+        },
+        isAboveWidth: {
+          type: Number,
+          value: 768
+        },
+        isBelowWidthFlag: {
+          type: Boolean,
+          notify: true
+        },
+        isAboveWidthFlag: {
+          type: Boolean,
+          notify: true
+        },
+        phones: {
+          type: Boolean,
+          notify: true
+        },
+        tablets: {
+          type: Boolean,
+          notify: true
+        },
+        smallDesktops: {
+          type: Boolean,
+          notify: true
+        },
+        largeScreens: {
+          type: Boolean,
+          notify: true
+        }
+      },
+      
+      listeners: {
+        'toggle-drawer': 'toggleDrawer',
+      },
+      
+      attached: function() {
+        this.scrollHeaderEffect();
+        window.addEventListener('scroll', this.scrollHeaderEffect.bind(this));
+      },
+      
+      detached: function() {
+        window.removeEventListener('scroll', this.scrollHeaderEffect.bind(this));
+      },
+      
+      scrollHeaderEffect: function() {
+        this.scrollProgress = this.$$('app-box').getScrollState().progress;
+      },
+      
+      _computeIsBelowWidthQuery: function(width) {
+        return '(max-width: ' + width + 'px)';
+      },
+      
+      _computeIsAboveWidthQuery: function(width) {
+        return '(min-width: ' + width + 'px)';
+      },
+      
+      toggleDrawer: function() {
+        var nodes = this.queryAllEffectiveChildren('[core-drawer]');
+        for (var i in nodes) {
+          var el = nodes[i];
+          if (el && el.toggleDrawer) {
+            el.toggleDrawer();
+          } 
+        }
+      }
+    })
+  </script>
+</dom-module>
