@@ -31,11 +31,16 @@
       api-key="AIzaSyBwdDdqMZZ_Zr2dtitUwUirKu-PnoArRUs"
     >
     </firebase-app>
-    <!--<firebase-document-->
-    <!--  id="document"-->
-    <!--  path="/sudoku/count"-->
-    <!--  data="{{count}}"-->
-    <!-->-->
+    <firebase-document
+      id="document"
+      path="/schuyler/text"
+      data="{{text}}"
+    >
+    <firebase-query
+    id="query"
+    path="/schuyler/mfdata"
+    data="{{mfdataOnline}}"
+    >
     <style is="custom-style" include="schuyler-home-page-style">
       :host {
         display: block;
@@ -54,6 +59,7 @@
 
     </style>
     <p>asdfasdf</p> 
+    <p>{{text}}</p>
     <div id="editor" on-click="" on-dragStart="onDragStart" on-dragEnd="onDragEnd">
       <div id="main-container" class="card">
         <div id="timeline-editor" >
@@ -96,7 +102,7 @@
         </div>
         <div id="media-lib" >
           <div id="mlf">
-              <template is="dom-repeat" items="{{mfdata}}">
+              <template is="dom-repeat" items="{{mfdataOnline}}">
                 <div class="mf" draggable="true">
                   <img src="{{item.src}}" class="mf img" draggable="false" value="{{item}}"/>
                   <p value="{{item}}"><br/>{{truncate(item.name,30)}}</p>
@@ -113,6 +119,18 @@
     Polymer({
       is: 'schuyler-home-page',
       properties: {
+        text: {
+          type: String,
+          value: null,
+          observer: '_textChanged'
+        },
+        
+        mfdataOnline: {
+          type: Array,
+          value: [],
+          observer: '_mfdataChanged'
+        },
+        
         eventId:{
           type: String,
           value: null,
@@ -158,6 +176,16 @@
           type: Array,
           value: []
         }
+      },
+      _textChanged: function(newData, oldData) {
+        console.log(newData);
+        console.log(oldData);
+      },
+      
+      _mfdataChanged: function(newData, oldData) {
+        console.log(newData);
+        console.log(oldData);
+        this.mfdata = newData;
       },
       reposition: function(event) {
         var timelineDiv = this.$.timeline;
@@ -216,7 +244,7 @@
         }
       },
       ready: function(){
-        this.mfdata = [
+        this.mfdata1 = [
             {
               src: '../../../images/manifest/icon-48x48.png',
               name: 'image1',
@@ -238,7 +266,7 @@
           ];
         
         
-        this.overlays = [
+        this.overlays2 = [
           {
             layer: 'layer2',
             name: 'dog2',
