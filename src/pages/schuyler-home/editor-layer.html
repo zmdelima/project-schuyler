@@ -1,0 +1,69 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="schuyler-home-page-style.html">
+
+<dom-module id="editor-layer">
+    <template>
+        <style is="custom-style" include="schuyler-home-page-style">
+            :host {
+                display: block;
+            }
+            #editor-layer-div {
+                height: inherit;
+                width: inherit;
+            }
+        </style>
+        
+        <div id='editor-layer-div'>
+            <template is="dom-repeat" items="{{overlays}}">
+                {{createOverlay(item)}}
+            </template>
+        </div>
+        
+    </template>
+    <script>
+        Polymer({
+           is: 'editor-layer', 
+           properties: {
+               overlays : {
+                   type: Array,
+                   notify: true
+               },
+               length: {
+                   type: Number,
+                   notify: true
+               },
+               id : String
+           },
+           ready: function() {
+               console.log('overlays');
+               console.log(this.overlays);
+           },
+           getRandomColor: function () {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++ ) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            },
+           createOverlay: function(object) {
+                console.log('length:'+object.length)
+                console.log('mainlength:'+this.length)
+                var overlay = document.createElement('div');
+                var tLength = this.length;
+                var overlayWidth= 'width: '+ Math.round(object.length * 10000 / tLength)/100 + '%; ';
+                var color = 'background-color: '+this.getRandomColor() +'; ';
+                overlay.setAttribute('draggable','true');
+                overlay.innerHTML = object.name;
+                var left = 'position: relative; left: '+Math.round(object.startTime * 10000 / tLength)/100+'%; ';
+                var others = 'height: inherit; float: left;'; 
+                var style = overlayWidth+color+left+others;
+                console.log(style);
+                overlay.setAttribute('style',style);
+                console.log(overlay);
+                this.root.querySelector('#editor-layer-div').appendChild(overlay);
+                // console.log("damn?");
+           }
+        });
+    </script>
+</dom-module>
